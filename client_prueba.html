@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO Client</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+</head>
+<body>
+
+  <h1>Socket.IO Client</h1>
+
+  <label for="usuario">Username:</label>
+  <input type="text" id="usuario" placeholder="Enter your username">
+  <label for="usuario">Username2 :</label>
+  <input type="text" id="usuario2" placeholder="Enter your username">
+
+  <label for="sala">Room:</label>
+  <input type="text" id="sala" placeholder="Enter the room name">
+
+  <label for="mensaje">Message:</label>
+  <input type="text" id="mensaje" placeholder="Enter your message">
+
+  <button id="sendButton">Send Message</button>
+
+  <script>
+    // Conectar al servidor de Socket.IO
+    const socket = io('http://localhost:8001');
+   
+// Enviar un mensaje al servidor desde el cliente
+document.getElementById('sendButton').addEventListener('click', () => {
+      const usuario = document.getElementById('usuario').value;
+      const usuario2 = document.getElementById('usuario2').value;
+      const sala = document.getElementById('sala').value;
+      const mensaje = document.getElementById('mensaje').value;
+      const messagesList = document.getElementById('messages');
+
+
+      // if (usuario && sala && mensaje && usuario2) {
+        // Unirse a la sala
+
+        // Enviar el mensaje al servidor
+        socket.emit('iniciarSocket', usuario); // ya jala
+        socket.emit('entrarChat', usuario, sala, usuario2); // ya jala 
+
+        socket.emit('enviarMensaje', { usuario, sala, mensaje }); // ya jala
+
+        socket.on('recibirMensaje', (message) => {
+            console.log('Mensaje del servidor:', message.mensaje);
+            // Crear un nuevo elemento de lista y agregar el mensaje a la lista
+            const listItem = document.createElement('li');
+            listItem.innerHTML = mensaje.mensaje;
+            messagesList.appendChild(listItem);
+        });
+        socket.emit('obtenerMensajes', sala); // ya jala
+
+        socket.on('mandarMensajes', (menssage) =>{
+          console.log('Mensajes guardados del servidor:', message);
+        })
+      // } else {
+      //   alert('Por favor, complete todos los campos.');
+      // }
+    });
+  </script>
+</body>
+</html>
