@@ -41,6 +41,62 @@ class Socket {
 				}
 			});
 
+			
+
+
+            client.on("entrarChat", async(usuario, sala, usuario2) => {
+				// console.log(data);
+				try {
+					const salas = await services.salas.obtenerSala(sala, usuario, usuario2);
+
+					if(!salas)
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
+
+					if(!(salas.freelancer === usuario || salas.empleador === usuario2) )
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
+					client.join(salas.id.toString());
+					client.emit("obtenerSala", salas.id)
+					return (salas.id);
+				} catch (error) {
+					console.log(error);
+				}
+			});
+
+            client.on("enviarMensaje", async(data, callback) => {
+				console.log("sala mandada   " + data.sala);
+				try {
+					if(data.mensaje.trim() === '' || !data.usuario)
+						throw new Error(`El mensaje, el usuario ${JSON.stringify(data)}`);
+					const mensaje = await services.mensajes.crearMensaje({
+						usuario: data.usuario,
+						sala:  data.sala,
+						mensaje: data.mensaje,
+						tipo: (data.tipo) ? data.tipo : 'mensaje' 
+					});
+
+					if(!mensaje)
+						throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
+					else
+					console.log('mensaje guardado');
+
+            client.in(data.sala).fetchSockets();
+
+            // client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+            client.emit("recibirMensaje", mensaje, (err, responses) => {
+				console.log('llego al emit ' + mensaje);
+                console.log("llegaron los  mensajes");
+
+                if (err) {
+                    console.log("Hubo error", err);
+                    console.log("responses", responses);
+                } else {
+                    console.log(responses); // one response per client
+                }
+            });
+            } catch (error) {
+                console.log(error);
+            }
+
 			client.on("obtenerMensajes", async(sala) => {
 				// console.log(data);
 				try {
@@ -67,64 +123,6 @@ class Socket {
 					console.log(error);
 				}
 			});
-
-
-            client.on("entrarChat", async(usuario, sala, usuario2) => {
-				// console.log(data);
-				try {
-					// if (!usuario || !sala || !usuario2) 
-					// 	throw new Error(`El usuario y la sala son necesarios: ${JSON.stringify(data)}`);
-
-					const salas = await services.salas.obtenerSala(sala, usuario, usuario2);
-
-					if(!salas)
-						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-
-					if(!(salas.freelancer.toString() === usuario || salas.empleador.toString() === usuario2) )
-						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-					// console.log('salas: ' + salas);
-					client.join(sala.toString());
-					return (sala.toString());
-				} catch (error) {
-					console.log(error);
-				}
-			});
-
-            client.on("enviarMensaje", async(data, callback) => {
-				try {
-
-					if(data.mensaje.trim() === '' || !data.usuario)
-						throw new Error(`El mensaje, el usuario ${JSON.stringify(data)}`);
-					
-					const mensaje = await services.mensajes.crearMensaje({
-						usuario: data.usuario,
-						sala: data.sala,
-						mensaje: data.mensaje,
-						tipo: (data.tipo) ? data.tipo : 'mensaje'
-					});
-
-					if(!mensaje)
-						throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
-					else
-					console.log('mensaje guardado');
-
-            client.in(data.sala).fetchSockets();
-
-            // client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-            client.emit("recibirMensaje", mensaje, (err, responses) => {
-				console.log('llego al emit ' + mensaje);
-                console.log("llegaron los  mensajes");
-
-                if (err) {
-                    console.log("Hubo error", err);
-                    console.log("responses", responses);
-                } else {
-                    console.log(responses); // one response per client
-                }
-            });
-            } catch (error) {
-                console.log(error);
-            }
 			});
 
           });

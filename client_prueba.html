@@ -25,38 +25,48 @@
 
   <script>
     // Conectar al servidor de Socket.IO
-    const socket = io('http://localhost:8001');
+    // const socket = io('http://localhost:8001');
+    const socket = io('https://web_socket.gtr.wundertec.com');
    
 // Enviar un mensaje al servidor desde el cliente
 document.getElementById('sendButton').addEventListener('click', () => {
       const usuario = document.getElementById('usuario').value;
       const usuario2 = document.getElementById('usuario2').value;
-      const sala = document.getElementById('sala').value;
+      let sala = document.getElementById('sala').value;
       const mensaje = document.getElementById('mensaje').value;
       const messagesList = document.getElementById('messages');
 
 
       // if (usuario && sala && mensaje && usuario2) {
         // Unirse a la sala
-
+        // let roomG = '';
         // Enviar el mensaje al servidor
         socket.emit('iniciarSocket', usuario); // ya jala
         socket.emit('entrarChat', usuario, sala, usuario2); // ya jala 
-
-        socket.emit('enviarMensaje', { usuario, sala, mensaje }); // ya jala
+        socket.on('obtenerSala', (room) =>{
+          // console.log('room' + room);
+          let roomG = room;
+        })
+        
+        if (sala === '') {
+          console.log(roomG);
+          sala = roomG;
+        }
+        socket.emit('enviarMensaje', { usuario, mensaje ,  sala}); // ya jala
+        
 
         socket.on('recibirMensaje', (message) => {
             console.log('Mensaje del servidor:', message.mensaje);
             // Crear un nuevo elemento de lista y agregar el mensaje a la lista
-            const listItem = document.createElement('li');
-            listItem.innerHTML = mensaje.mensaje;
-            messagesList.appendChild(listItem);
+            // const listItem = document.createElement('li');
+            // listItem.innerHTML = mensaje.mensaje;
+            // messagesList.appendChild(listItem);
         });
-        socket.emit('obtenerMensajes', sala); // ya jala
+        // socket.emit('obtenerMensajes', sala); // ya jala
 
-        socket.on('mandarMensajes', (menssage) =>{
-          console.log('Mensajes guardados del servidor:', message);
-        })
+        // socket.on('mandarMensajes', (menssage) =>{
+        //   console.log('Mensajes guardados del servidor:', message);
+        // })
       // } else {
       //   alert('Por favor, complete todos los campos.');
       // }
