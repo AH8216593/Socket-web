@@ -15,25 +15,25 @@ const prisma = new PrismaClient();
       estado: true
       },
     });
-    
-    console.log(newMensaje);
+    console.log('mensaje Creado');
     return newMensaje;
   } catch (error) {
     throw error;
   }
   
 }
-// obtiene sala por ID
-async function getMensajeById  (Sala) {
+// obtiene mensajes sala por ID
+async function getMensajeById  (mensaje) {
   try {
     const  getMensajeId = await prisma.mensajes.findMany({
       where: {
-        sala: Sala
+        sala: mensaje
       },
       orderBy: {
           fecha: 'asc'
       }
     }) 
+    console.log("todos los mensajes " + getMensajeId);
     return getMensajeId;
   } catch (error) {
     throw error;

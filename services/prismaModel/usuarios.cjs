@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
        }
      });
    
-     console.log(user);
      return user;
  }
 

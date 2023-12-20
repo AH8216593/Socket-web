@@ -10,21 +10,20 @@ async function getSalaById  (data) {
         id: Sala
       }
     }); 
+
+    console.log('se obtiene una sola sala');
     return getSalaId;
 
   } catch (error) {
     throw error;
   }
 };
-async function getSalaReviw  (usuario, usuario2) {
+async function getSalaReviw  (usuario) {
   try {
     const  getsala = await prisma.sala.findMany({
       where:{
         freelancer:{
           contains: usuario
-        },
-        empleador:{
-          contains: usuario2
         }
       }
       // where: {
@@ -32,6 +31,33 @@ async function getSalaReviw  (usuario, usuario2) {
       //   empleador: usuario2
       // }
     }); 
+
+    console.log('se obtiene sala ');
+    return getsala;
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+async function getSalaForUser  (usuario, usuario2) {
+  try {
+    const  getsala = await prisma.sala.findMany({
+      where:{
+        freelancer : {
+          contains: usuario
+        },
+        empleador: {
+          contains: usuario2
+        },
+        OR: [
+         {freelancer: usuario2},
+         {empleador: usuario}
+        ]
+      }
+    }); 
+
+    console.log('se obtiene sala' + getsala);
     return getsala;
 
   } catch (error) {
@@ -52,6 +78,7 @@ async function createSala(usuario, usuario2entarda){
       },
     });
 
+    console.log('sala creada');
     return salaCreada
   } catch (error) {
     console.error('Error al crear la sala:', error);
@@ -72,4 +99,4 @@ async function deleteSala ( salaId){
 }
 
 
-module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw} ;
+module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser} ;

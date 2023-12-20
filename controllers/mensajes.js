@@ -16,11 +16,11 @@ const obtenerMensaje = async (req = request, res = response) => {
     }
 }
 
-const obtenerMensajes = async (sala) => {
+const obtenerMensajes = async (mensa) => {
     try {
-        // const { desde, hasta, sala } = req.headers;
+        // const { desde, hasta, mensa } = req.headers;
 
-        const mensajes = await services.prisma.mensajes.getMensajeById(sala);
+        const mensajes = await services.prisma.mensajes.getMensajeById(mensa);
 
         // return res.status(200).json(mensajes);
         return mensajes;

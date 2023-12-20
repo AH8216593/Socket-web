@@ -32,7 +32,7 @@
 document.getElementById('sendButton').addEventListener('click', () => {
       const usuario = document.getElementById('usuario').value;
       const usuario2 = document.getElementById('usuario2').value;
-      let sala = document.getElementById('sala').value;
+      const sala = document.getElementById('sala').value;
       const mensaje = document.getElementById('mensaje').value;
       const messagesList = document.getElementById('messages');
 
@@ -42,31 +42,31 @@ document.getElementById('sendButton').addEventListener('click', () => {
         // let roomG = '';
         // Enviar el mensaje al servidor
         socket.emit('iniciarSocket', usuario); // ya jala
+        socket.emit('obtenerSalas', usuario, usuario2); // ya jala
+        socket.on('responseSalas', data =>{
+            console.log("responseSalas" + data);
+            
         socket.emit('entrarChat', usuario, sala, usuario2); // ya jala 
-        socket.on('obtenerSala', (room) =>{
-          // console.log('room' + room);
-          let roomG = room;
-        })
-        
-        if (sala === '') {
-          console.log(roomG);
-          sala = roomG;
-        }
+        //enviar un mensaje 
         socket.emit('enviarMensaje', { usuario, mensaje ,  sala}); // ya jala
         
 
+        //para recibir el mensaje 
         socket.on('recibirMensaje', (message) => {
             console.log('Mensaje del servidor:', message.mensaje);
-            // Crear un nuevo elemento de lista y agregar el mensaje a la lista
-            // const listItem = document.createElement('li');
-            // listItem.innerHTML = mensaje.mensaje;
-            // messagesList.appendChild(listItem);
         });
-        // socket.emit('obtenerMensajes', sala); // ya jala
 
-        // socket.on('mandarMensajes', (menssage) =>{
-        //   console.log('Mensajes guardados del servidor:', message);
-        // })
+
+        //para obtener los mensajes de una sala 
+        socket.emit('obtenerMensajes', sala); // ya jala3
+        socket.on('todosMensajes', newMensajes =>{
+          console.log('lsitado de mensajes' + newMensajes);
+        })
+        });
+
+
+       
+
       // } else {
       //   alert('Por favor, complete todos los campos.');
       // }
