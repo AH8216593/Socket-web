@@ -18,13 +18,6 @@ const obtenerSala = async (salaa, usuario, usuario2) => {
             const sala = await services.prisma.salas.getSalaById(salaa);
             return sala;
         }
-
-        // if (sala === null || sala === '') {
-        //     return crearSala(usuario, usuario2);
-        // }else{
-
-        //     return  sala;
-        // }
         // return res.status(200).json(sala);
     }
     catch (error) {

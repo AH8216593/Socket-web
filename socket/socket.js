@@ -29,32 +29,32 @@ class Socket {
 						throw new Error(`El usuario no existe: ${JSON.stringify(data)}`);
 	
 					client.join(data.usuario);
-	
-					// return callback(data.usuario);
 				} catch (error) {
 					console.log(error);
 				}
 			});
 
-			client.on("obtenerSalas", async (usuario , usuario2) =>{
-				const getSalas = await services.salas.obtenerSalaUser(usuario, usuario2);
+			client.on("obtenerSalas", async (data) =>{
+				const getSalas = await services.salas.obtenerSalaUser(data.usuario, data.usuario2);
 				if(!getSalas)
 						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-				client.emit('responseSalas', getSalas.id)
-				return (getSalas.id);
+
+					console.log('salas id  ----' + getSalas);
+					client.emit('responseSalas', getSalas)
+					return (getSalas.id);
 			});
 
-            client.on("entrarChat", async(usuario, sala, usuario2) => {
+            client.on("entrarChat", async(data) => {
 				// console.log(data);
 				try {
-					const salas = await services.salas.obtenerSala(sala, usuario, usuario2);
+					const salas = await services.salas.obtenerSala(data.sala, data.usuario, data.usuario2);
 
 					if(!salas)
 						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
 
-					if(!(salas.freelancer === usuario))
-						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-					client.join(salas.id.toString());
+					// if(!(salas.freelancer === usuario))
+					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
+					// client.join(salas.id.toString());
 
 					// para obtener la sala al iniciar
 					client.emit("obtenerSala", salas.id)
@@ -67,8 +67,8 @@ class Socket {
 
             client.on("enviarMensaje", async(data) => {
 				try {
-					if(data.mensaje.trim() === '' || !data.usuario)
-						throw new Error(`El mensaje, el usuario ${JSON.stringify(data)}`);
+					if(data.mensaje.trim() === '' || !data.usuario || data.sala === '')
+						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(data)}`);
 					const mensaje = await services.mensajes.crearMensaje({
 						usuario: data.usuario,
 						sala:  data.sala,

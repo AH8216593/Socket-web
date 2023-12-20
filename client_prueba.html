@@ -41,35 +41,37 @@ document.getElementById('sendButton').addEventListener('click', () => {
         // Unirse a la sala
         // let roomG = '';
         // Enviar el mensaje al servidor
-        socket.emit('iniciarSocket', usuario); // ya jala
-        socket.emit('obtenerSalas', usuario, usuario2); // ya jala
-        socket.on('responseSalas', data =>{
-            console.log("responseSalas" + data);
-            
-        socket.emit('entrarChat', usuario, sala, usuario2); // ya jala 
-        //enviar un mensaje 
-        socket.emit('enviarMensaje', { usuario, mensaje ,  sala}); // ya jala
+        let response = '';
         
-
+        //iniciar el socket
+        socket.emit('iniciarSocket', usuario); // ya jala
+        let data = {
+          usuario : usuario,
+          usuario2: usuario2,
+          mensaje : mensaje,
+          sala : sala === '' ? response :  sala
+        }
+        //obtiene las salas en caso que exista un chat 
+        socket.emit('obtenerSalas', data); // ya jala
+        //respuesta de las salas
+        socket.on('responseSalas', res =>{
+            console.log("responseSalas" + res);
+            response = res;
+            //entra al chat
+        socket.emit('entrarChat', data); // ya jala 
+        //enviar un mensaje 
+        socket.emit('enviarMensaje', data); // ya jala
         //para recibir el mensaje 
         socket.on('recibirMensaje', (message) => {
             console.log('Mensaje del servidor:', message.mensaje);
         });
-
-
         //para obtener los mensajes de una sala 
         socket.emit('obtenerMensajes', sala); // ya jala3
+        //para que muestre todos los mensajes
         socket.on('todosMensajes', newMensajes =>{
           console.log('lsitado de mensajes' + newMensajes);
         })
         });
-
-
-       
-
-      // } else {
-      //   alert('Por favor, complete todos los campos.');
-      // }
     });
   </script>
 </body>
