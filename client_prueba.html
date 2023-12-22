@@ -22,11 +22,11 @@
   <input type="text" id="mensaje" placeholder="Enter your message">
 
   <button id="sendButton">Send Message</button>
-
+  <ul id="mensajes"></ul>
   <script>
     // Conectar al servidor de Socket.IO
-    // const socket = io('http://localhost:8001');
-    const socket = io('https://web_socket.gtr.wundertec.com');
+    const socket = io('http://localhost:8001');
+    // const socket = io('https://web_socket.gtr.wundertec.com');
    
 // Enviar un mensaje al servidor desde el cliente
 document.getElementById('sendButton').addEventListener('click', () => {
@@ -70,6 +70,10 @@ document.getElementById('sendButton').addEventListener('click', () => {
         //para recibir el mensaje 
         socket.on('recibirMensaje', (message) => {
             console.log('Mensaje del servidor:', message.mensaje);
+            const listaMensajes = document.getElementById('mensajes');
+            const nuevoMensaje = document.createElement('li');
+            nuevoMensaje.textContent = message.mensaje;
+            listaMensajes.appendChild(nuevoMensaje);
         });
         //para obtener los mensajes de una sala 
         socket.emit('obtenerMensajes', sala); // ya jala3
