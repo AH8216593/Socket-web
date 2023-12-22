@@ -175,7 +175,7 @@ async function obtenerListado (userId) {
 
 
     const obtenerListado = await prisma.$queryRaw`
-        SELECT s.id, s.activo, 
+        SELECT s.id, s.activo,  
         (SELECT count(me.id)
         FROM mensajes me
         WHERE me.sala = s.id
@@ -183,9 +183,150 @@ async function obtenerListado (userId) {
         (SELECT me.mensaje
         FROM mensajes me
         WHERE me.sala = s.id
-        AND me.estado = 1
         ORDER BY me.id
-        DESC LIMIT 1) as ultimomensaje
+        DESC LIMIT 1) as ultimomensaje,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.idusuario
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.idusuario
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as idusuario,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.nombre
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.nombre
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as nombre,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.apellidopaterno
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.apellidopaterno
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as apellidopaterno,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.apellidomaterno
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.apellidomaterno
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as apellidomaterno,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.idrol
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.idrol
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as idrol,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT ro.rol
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            INNER JOIN rol ro ON ro.idrol = uu.idrol
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT ro.rol
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            INNER JOIN rol ro ON ro.idrol = uu.idrol
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as rol,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.urlfoto
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.urlfoto
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as urlfoto,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT uu.idpais
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT uu.idpais
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as idpais,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT pp.pais
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT pp.pais
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as pais,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT pp.idregion
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT pp.idregion
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as idregion,
+        (if( s.freelancer = ${userId}, ( 
+            SELECT rr.region
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            INNER JOIN region rr ON rr.idregion = pp.idregion
+            WHERE ss.id = s.id
+            LIMIT 1
+        ), (SELECT rr.region
+            FROM sala ss
+            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+            INNER JOIN pais pp ON uu.idpais = pp.idpais
+            INNER JOIN region rr ON rr.idregion = pp.idregion
+            WHERE ss.id = s.id
+            LIMIT 1
+        ) ) ) as region
         FROM sala s
         INNER JOIN mensajes m on m.sala = s.id
         WHERE s.freelancer = ${userId}
@@ -196,11 +337,22 @@ async function obtenerListado (userId) {
 
 
       const resultadoFormateado = obtenerListado.map((sala) => ({
-        id: sala.id && sala.id.toString(), // Verificar si id está definido antes de llamar a toString
+        id: sala.id && sala.id.toString(),
         activo: sala.activo,
-        mensajespendientes: sala.mensajespendientes && sala.mensajespendientes.toString(), // Verificar si mensajespendientes está definido antes de llamar a toString
-        ultimomensaje: sala.ultimomensaje && sala.ultimomensaje.toString(), // Verificar si ultimomensaje está definido antes de llamar a toString
-      }));
+        mensajespendientes: sala.mensajespendientes && sala.mensajespendientes.toString(),
+        ultimomensaje: sala.ultimomensaje && sala.ultimomensaje.toString(),
+        idusuario: sala.idusuario && sala.idusuario.toString(),
+        nombre: sala.nombre,
+        apellidopaterno: sala.apellidopaterno,
+        apellidomaterno: sala.apellidomaterno,
+        idrol: sala.idrol && sala.idrol.toString(),
+        rol: sala.rol,
+        urlfoto: sala.urlfoto,
+        idpais: sala.idpais && sala.idpais.toString(),
+        pais: sala.pais,
+        idregion: sala.idregion && sala.idregion.toString(),
+        region: sala.region,
+        }));
       console.log('obtener listado ' + resultadoFormateado);
       return resultadoFormateado;
     
