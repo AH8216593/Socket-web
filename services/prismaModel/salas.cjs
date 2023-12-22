@@ -352,7 +352,7 @@ async function obtenerListado (userId) {
         pais: sala.pais,
         idregion: sala.idregion && sala.idregion.toString(),
         region: sala.region,
-        }));
+      }));
       console.log('obtener listado ' + resultadoFormateado);
       return resultadoFormateado;
     
