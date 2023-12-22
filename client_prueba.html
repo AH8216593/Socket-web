@@ -49,8 +49,14 @@ document.getElementById('sendButton').addEventListener('click', () => {
           usuario : usuario,
           usuario2: usuario2,
           mensaje : mensaje,
-          sala : sala === '' ? response :  sala
+          // sala : sala === '' ? response :  sala
+          sala : sala 
         }
+
+        socket.emit('obtenerListadoChats' , usuario);
+        socket.on('responseListadoChats', usuario =>{
+          console.log('listado de salas ' + data);
+        })
         //obtiene las salas en caso que exista un chat 
         socket.emit('obtenerSalas', data); // ya jala
         //respuesta de las salas

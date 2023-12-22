@@ -34,6 +34,17 @@ class Socket {
 				}
 			});
 
+			//obenter todas las salas por ususario para notificar 
+			client.on("obtenerListadoChats", async (data) =>{
+				const getSalas = await services.salas.obtenerListadoSalas(data);
+				if(!getSalas)
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(getSalas)}`);
+					console.log('salas id  ----' + getSalas);
+					client.emit('responseListadoChats', getSalas)
+					return (getSalas);
+			});
+
+
 			client.on("obtenerSalas", async (data) =>{
 				const getSalas = await services.salas.obtenerSalaUser(data.usuario, data.usuario2);
 				if(!getSalas)
@@ -54,7 +65,8 @@ class Socket {
 
 					// if(!(salas.freelancer === usuario))
 					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-					// client.join(salas.id.toString());
+				// esta linea genera la conexion con el join entre una conversacion y otra
+					client.join(salas.id.toString());
 
 					// para obtener la sala al iniciar
 					client.emit("obtenerSala", salas.id)

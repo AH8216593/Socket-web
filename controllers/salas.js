@@ -57,6 +57,24 @@ const obtenerSalaUser = async (usuario, usuario2) => {
     }
 }
 
+
+//obtiene listado de salas
+const obtenerListadoSalas = async (user) => {
+    try {
+        // const { desde, hasta, mensa } = req.headers;
+
+        const salas = await services.prisma.salas.obtenerListado(user);
+
+        // return res.status(200).json(salas);
+        return salas;
+    }
+    catch (error) {
+        console.error(error.message);
+
+        // return res.status(404).json({ msg: error.message });
+    }
+}
+
 const crearSala = async ( usuario, usuario2) => {
     try {
 
@@ -91,7 +109,8 @@ export {
     obtenerSalas,
     crearSala,
     eliminarSala,
-    obtenerSalaUser
+    obtenerSalaUser,
+    obtenerListadoSalas
 }
 
 

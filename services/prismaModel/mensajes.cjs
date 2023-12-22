@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
       tipo:   req.tipo,
       mensaje:   req.mensaje,
       fecha:    fecha,
-      estado: true
+      estado: false
       },
     });
     console.log('mensaje Creado');

@@ -111,5 +111,103 @@ async function deleteSala ( salaId){
   }
 }
 
+async function obtenerListado (userId) {
+  try {
+    // const obtenerListado = await prisma.sala.findMany({
+    //   select: {
+    //     id: true,
+    //     activo: true,
+    //     mensajespendientes: {
+    //       count: {
+    //         where: {
+    //           estado: 1,
+    //           mensajes: {
+    //             some: {
+    //               estado: 1,
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //     ultimomensaje: {
+    //       select: {
+    //         mensaje: true,
+    //       },
+    //       where: {
+    //         estado: 1,
+    //       },
+    //       orderBy: {
+    //         id: 'desc',
+    //       },
+    //       take: 1,
+    //     },
+    //   },
+    //   where: {
+    //     OR: [
+    //       {
+    //         freelancer: userId,
+    //       },
+    //       {
+    //         empleador: userId,
+    //       },
+    //     ],
+    //   },
+    //   include: {
+    //     mensajes: {
+    //       where: {
+    //         estado: 1,
+    //       },
+    //       orderBy: {
+    //         id: 'desc',
+    //       },
+    //     },
+    //   },
+    //   groupBy: {
+    //     id: true,
+    //     activo: true,
+    //   },
+    //   orderBy: {
+    //     mensajes: {
+    //       id: 'desc',
+    //     },
+    //   },  
+    //   });
 
-module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser} ;
+
+    const obtenerListado = await prisma.$queryRaw`
+        SELECT s.id, s.activo, 
+        (SELECT count(me.id)
+        FROM mensajes me
+        WHERE me.sala = s.id
+        AND me.estado = 1) as mensajespendientes,
+        (SELECT me.mensaje
+        FROM mensajes me
+        WHERE me.sala = s.id
+        AND me.estado = 1
+        ORDER BY me.id
+        DESC LIMIT 1) as ultimomensaje
+        FROM sala s
+        INNER JOIN mensajes m on m.sala = s.id
+        WHERE s.freelancer = ${userId}
+        OR s.empleador = ${userId}
+        group by s.id
+        order by m.id DESC;
+    `;
+
+
+      const resultadoFormateado = obtenerListado.map((sala) => ({
+        id: sala.id && sala.id.toString(), // Verificar si id está definido antes de llamar a toString
+        activo: sala.activo,
+        mensajespendientes: sala.mensajespendientes && sala.mensajespendientes.toString(), // Verificar si mensajespendientes está definido antes de llamar a toString
+        ultimomensaje: sala.ultimomensaje && sala.ultimomensaje.toString(), // Verificar si ultimomensaje está definido antes de llamar a toString
+      }));
+      console.log('obtener listado ' + resultadoFormateado);
+      return resultadoFormateado;
+    
+  } catch (error) {
+    throw error
+  }
+}
+
+
+module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado} ;
