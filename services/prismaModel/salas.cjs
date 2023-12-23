@@ -113,67 +113,6 @@ async function deleteSala ( salaId){
 
 async function obtenerListado (userId) {
   try {
-    // const obtenerListado = await prisma.sala.findMany({
-    //   select: {
-    //     id: true,
-    //     activo: true,
-    //     mensajespendientes: {
-    //       count: {
-    //         where: {
-    //           estado: 1,
-    //           mensajes: {
-    //             some: {
-    //               estado: 1,
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //     ultimomensaje: {
-    //       select: {
-    //         mensaje: true,
-    //       },
-    //       where: {
-    //         estado: 1,
-    //       },
-    //       orderBy: {
-    //         id: 'desc',
-    //       },
-    //       take: 1,
-    //     },
-    //   },
-    //   where: {
-    //     OR: [
-    //       {
-    //         freelancer: userId,
-    //       },
-    //       {
-    //         empleador: userId,
-    //       },
-    //     ],
-    //   },
-    //   include: {
-    //     mensajes: {
-    //       where: {
-    //         estado: 1,
-    //       },
-    //       orderBy: {
-    //         id: 'desc',
-    //       },
-    //     },
-    //   },
-    //   groupBy: {
-    //     id: true,
-    //     activo: true,
-    //   },
-    //   orderBy: {
-    //     mensajes: {
-    //       id: 'desc',
-    //     },
-    //   },  
-    //   });
-
-
     const obtenerListado = await prisma.$queryRaw`
         SELECT s.id, s.activo,  
         (SELECT count(me.id)
@@ -336,23 +275,27 @@ async function obtenerListado (userId) {
     `;
 
 
-      const resultadoFormateado = obtenerListado.map((sala) => ({
-        id: sala.id && sala.id.toString(),
-        activo: sala.activo,
-        mensajespendientes: sala.mensajespendientes && sala.mensajespendientes.toString(),
-        ultimomensaje: sala.ultimomensaje && sala.ultimomensaje.toString(),
-        idusuario: sala.idusuario && sala.idusuario.toString(),
-        nombre: sala.nombre,
-        apellidopaterno: sala.apellidopaterno,
-        apellidomaterno: sala.apellidomaterno,
-        idrol: sala.idrol && sala.idrol.toString(),
-        rol: sala.rol,
-        urlfoto: sala.urlfoto,
-        idpais: sala.idpais && sala.idpais.toString(),
-        pais: sala.pais,
-        idregion: sala.idregion && sala.idregion.toString(),
-        region: sala.region,
-      }));
+      // const resultadoFormateado = obtenerListado.map((sala) => ({
+      //   id: sala.id && sala.id.toString(),
+      //   activo: sala.activo,
+      //   mensajespendientes: sala.mensajespendientes && sala.mensajespendientes.toString(),
+      //   ultimomensaje: sala.ultimomensaje && sala.ultimomensaje.toString(),
+      //   idusuario: sala.idusuario && sala.idusuario.toString(),
+      //   nombre: sala.nombre,
+      //   apellidopaterno: sala.apellidopaterno,
+      //   apellidomaterno: sala.apellidomaterno,
+      //   idrol: sala.idrol && sala.idrol.toString(),
+      //   rol: sala.rol,
+      //   urlfoto: sala.urlfoto,
+      //   idpais: sala.idpais && sala.idpais.toString(),
+      //   pais: sala.pais,
+      //   idregion: sala.idregion && sala.idregion.toString(),
+      //   region: sala.region,
+      // }));
+
+      const resultadoFormateado = obtenerListado.map((sala) => JSON.parse(JSON.stringify(sala, (key, value) => (typeof value === 'bigint' ? value.toString() : value))));
+
+
       console.log('obtener listado ' + resultadoFormateado);
       return resultadoFormateado;
     

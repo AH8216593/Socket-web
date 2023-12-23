@@ -26,7 +26,6 @@
   <script>
     // Conectar al servidor de Socket.IO
     const socket = io('http://localhost:8001');
-    // const socket = io('https://web_socket.gtr.wundertec.com');
    
 // Enviar un mensaje al servidor desde el cliente
 document.getElementById('sendButton').addEventListener('click', () => {
@@ -54,7 +53,7 @@ document.getElementById('sendButton').addEventListener('click', () => {
         }
 
         socket.emit('obtenerListadoChats' , usuario);
-        socket.on('responseListadoChats', usuario =>{
+        socket.on('responseListadoChats', data =>{
           console.log('listado de salas ' + data);
         })
         //obtiene las salas en caso que exista un chat 
