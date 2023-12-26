@@ -304,5 +304,26 @@ async function obtenerListado (userId) {
   }
 }
 
+//Actualiza estatus de sala cuando se lee el mensaje
+async function actualizarSala  (data) {
+  const Sala = parseInt(data, 10);
+  try {
+    const updateSala = await prisma.sala.update({
+      where: {
+        id: Sala
+      },
+      data: {
+        activo: 0
+      }
+    });
 
-module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado} ;
+    console.log('update de sala correcto');
+    return updateSala;
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado, actualizarSala} ;

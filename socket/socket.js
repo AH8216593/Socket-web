@@ -93,8 +93,7 @@ class Socket {
 					else
 					console.log('mensaje guardado');
             			client.in(data.sala).fetchSockets();
-						// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						client.in(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+						client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 						// client.emit("recibirMensaje", mensaje, (err, responses) => {
 							console.log('llego al emit ' + mensaje);
 							console.log("llegaron los  mensajes");
@@ -135,6 +134,15 @@ class Socket {
 					console.log(error);
 				}
 			});
+
+			// actualizar status de la sala (mensaje leido)
+			client.on("mensajeLeido", async (data) =>{
+				const getSalas = await services.salas.actualizarStatusSala(data.sala);
+				if(!getSalas)
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
+					return (getSalas);
+			});
+
 			
           });
 		  
