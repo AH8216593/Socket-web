@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
       tipo:   req.tipo,
       mensaje:   req.mensaje,
       fecha:    fecha,
-      estado: false
+      estado: req.estado
       },
     });
     console.log('mensaje Creado');
@@ -27,7 +27,8 @@ async function getMensajeById  (mensaje) {
   try {
     const  getMensajeId = await prisma.mensajes.findMany({
       where: {
-        sala: mensaje
+        sala: mensaje,
+        estado: false
       },
       orderBy: {
           fecha: 'asc'
