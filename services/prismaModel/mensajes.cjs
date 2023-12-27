@@ -83,5 +83,24 @@ async function deleteMensale ( mensajeId){
   }
 }
 
+async function actualizarMensaje  (room) {
+  const Sala = parseInt(room, 10);
+  try {
+    const updateSala = await prisma.mensajes.update({
+      where: {
+        sala: room,
+      },
+      data: {
+        estado: 1,
+      },
+    });
 
-module.exports =   {getMensajes, createMensaje, getMensajeById, deleteMensale, updateMensajes};
+    console.log('update de sala correcto');
+    return updateSala;
+
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports =   {getMensajes, createMensaje, getMensajeById, deleteMensale, updateMensajes, actualizarMensaje };

@@ -306,25 +306,25 @@ order by m.id DESC;
 }
 
 //Actualiza estatus de sala cuando se lee el mensaje
-async function actualizarSala  (room) {
-  const Sala = parseInt(room, 10);
-  try {
-    const updateSala = await prisma.sala.update({
-      where: {
-        id: room
-      },
-      data: {
-        activo: false
-      }
-    });
+// async function actualizarSala  (room) {
+//   const Sala = parseInt(room, 10);
+//   try {
+//     const updateSala = await prisma.mensajes.update({
+//       where: {
+//         sala: room,
+//       },
+//       data: {
+//         estado: 1,
+//       },
+//     });
 
-    console.log('update de sala correcto');
-    return updateSala;
+//     console.log('update de sala correcto');
+//     return updateSala;
 
-  } catch (error) {
-    throw error;
-  }
-};
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 
-module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado, actualizarSala} ;
+module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado} ;

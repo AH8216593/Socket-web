@@ -88,19 +88,19 @@ const crearSala = async ( usuario, usuario2) => {
         // return res.status(404).json({ msg: error.message });
     }
 }
-const actualizarStatusSala = async ( room) => {
-    try {
+// const actualizarStatusSala = async ( room) => {
+//     try {
 
-        const sala = await services.prisma.salas.actualizarSala(room);
+//         const sala = await services.prisma.salas.actualizarSala(room);
 
-        return sala;
-    }
-    catch (error) {
-        console.error(error.message);
+//         return sala;
+//     }
+//     catch (error) {
+//         console.error(error.message);
 
-        // return res.status(404).json({ msg: error.message });
-    }
-}
+//         // return res.status(404).json({ msg: error.message });
+//     }
+// }
 
 const eliminarSala = async (req = request, res = response) => {
     try {
@@ -124,7 +124,7 @@ export {
     eliminarSala,
     obtenerSalaUser,
     obtenerListadoSalas,
-    actualizarStatusSala
+    // actualizarStatusSala
 }
 
 
