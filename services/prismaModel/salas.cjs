@@ -118,14 +118,14 @@ async function obtenerListado (userId) {
 (SELECT count(me.id)
 FROM mensajes me
 WHERE me.sala = s.id
-AND me.usuario <> ${userId}
+AND me.usuario <> ${user}
 AND me.estado = 0 ) as mensajespendientes,
 (SELECT me.mensaje
 FROM mensajes me
 WHERE me.sala = s.id
 ORDER BY me.id
 DESC LIMIT 1) as ultimomensaje,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.idusuario
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -137,7 +137,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idusuario,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.nombre
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -149,7 +149,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as nombre,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.apellidopaterno
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -161,7 +161,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as apellidopaterno,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.apellidomaterno
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -173,7 +173,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as apellidomaterno,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.idrol
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -185,7 +185,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idrol,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT ro.rol
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -199,7 +199,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as rol,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.urlfoto
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -211,7 +211,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as urlfoto,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT uu.idpais
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -223,7 +223,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idpais,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT pp.pais
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -237,7 +237,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as pais,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT pp.idregion
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -251,7 +251,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idregion,
-(if( s.freelancer = ${userId}, ( 
+(if( s.freelancer = ${user}, ( 
 	SELECT rr.region
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -269,8 +269,8 @@ DESC LIMIT 1) as ultimomensaje,
 ) ) ) as region
 FROM sala s
 INNER JOIN mensajes m on m.sala = s.id
-WHERE s.freelancer = ${userId}
-OR s.empleador = ${userId}
+WHERE s.freelancer = ${user}
+OR s.empleador = ${user}
 group by s.id
 order by m.id DESC;
     `;
@@ -306,12 +306,12 @@ order by m.id DESC;
 }
 
 //Actualiza estatus de sala cuando se lee el mensaje
-async function actualizarSala  (data2) {
-  // const Sala = parseInt(data, 10);
+async function actualizarSala  (salaId) {
+  const Sala = parseInt(salaId, 10);
   try {
     const updateSala = await prisma.sala.update({
       where: {
-        id: data2  
+        id: salaId
       },
       data: {
         activo: false
