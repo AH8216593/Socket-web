@@ -91,7 +91,7 @@ const crearSala = async ( usuario, usuario2) => {
 const actualizarStatusSala = async ( room) => {
     try {
 
-        const sala = await services.prisma.salas.createSala(room);
+        const sala = await services.prisma.salas.actualizarSala(room);
 
         return sala;
     }
