@@ -94,7 +94,7 @@ class Socket {
 					console.log('mensaje guardado');
             			client.in(data.sala).fetchSockets();
 						// client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						client.broadcast.to(data.sala).broadcast.emit("recibirMensaje", mensaje, (err, responses) => {
+						client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 						// client.emit("recibirMensaje", mensaje, (err, responses) => {
 							console.log('llego al emit ' + mensaje);
 							console.log("llegaron los  mensajes");
