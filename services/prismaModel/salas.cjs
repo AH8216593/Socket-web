@@ -118,14 +118,14 @@ async function obtenerListado (userId) {
 (SELECT count(me.id)
 FROM mensajes me
 WHERE me.sala = s.id
-AND me.usuario <> ${user}
+AND me.usuario <> ${userId}
 AND me.estado = 0 ) as mensajespendientes,
 (SELECT me.mensaje
 FROM mensajes me
 WHERE me.sala = s.id
 ORDER BY me.id
 DESC LIMIT 1) as ultimomensaje,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.idusuario
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -137,7 +137,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idusuario,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.nombre
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -149,7 +149,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as nombre,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.apellidopaterno
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -161,7 +161,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as apellidopaterno,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.apellidomaterno
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -173,7 +173,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as apellidomaterno,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.idrol
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -185,7 +185,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idrol,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT ro.rol
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -199,7 +199,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as rol,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.urlfoto
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -211,7 +211,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as urlfoto,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT uu.idpais
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -223,7 +223,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idpais,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT pp.pais
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -237,7 +237,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as pais,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT pp.idregion
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -251,7 +251,7 @@ DESC LIMIT 1) as ultimomensaje,
 	WHERE ss.id = s.id
 	LIMIT 1
 ) ) ) as idregion,
-(if( s.freelancer = ${user}, ( 
+(if( s.freelancer = ${userId}, ( 
 	SELECT rr.region
 	FROM sala ss
 	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
@@ -269,8 +269,8 @@ DESC LIMIT 1) as ultimomensaje,
 ) ) ) as region
 FROM sala s
 INNER JOIN mensajes m on m.sala = s.id
-WHERE s.freelancer = ${user}
-OR s.empleador = ${user}
+WHERE s.freelancer = ${userId}
+OR s.empleador = ${userId}
 group by s.id
 order by m.id DESC;
     `;
