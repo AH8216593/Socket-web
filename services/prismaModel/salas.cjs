@@ -114,164 +114,165 @@ async function deleteSala ( salaId){
 async function obtenerListado (userId) {
   try {
     const obtenerListado = await prisma.$queryRaw`
-        SELECT s.id, s.activo,  
-        (SELECT count(me.id)
-        FROM mensajes me
-        WHERE me.sala = s.id
-        AND me.estado = 1) as mensajespendientes,
-        (SELECT me.mensaje
-        FROM mensajes me
-        WHERE me.sala = s.id
-        ORDER BY me.id
-        DESC LIMIT 1) as ultimomensaje,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.idusuario
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.idusuario
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as idusuario,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.nombre
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.nombre
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as nombre,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.apellidopaterno
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.apellidopaterno
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as apellidopaterno,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.apellidomaterno
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.apellidomaterno
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as apellidomaterno,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.idrol
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.idrol
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as idrol,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT ro.rol
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            INNER JOIN rol ro ON ro.idrol = uu.idrol
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT ro.rol
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            INNER JOIN rol ro ON ro.idrol = uu.idrol
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as rol,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.urlfoto
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.urlfoto
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as urlfoto,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT uu.idpais
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT uu.idpais
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as idpais,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT pp.pais
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT pp.pais
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as pais,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT pp.idregion
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT pp.idregion
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as idregion,
-        (if( s.freelancer = ${userId}, ( 
-            SELECT rr.region
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.empleador
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            INNER JOIN region rr ON rr.idregion = pp.idregion
-            WHERE ss.id = s.id
-            LIMIT 1
-        ), (SELECT rr.region
-            FROM sala ss
-            INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
-            INNER JOIN pais pp ON uu.idpais = pp.idpais
-            INNER JOIN region rr ON rr.idregion = pp.idregion
-            WHERE ss.id = s.id
-            LIMIT 1
-        ) ) ) as region
-        FROM sala s
-        INNER JOIN mensajes m on m.sala = s.id
-        WHERE s.freelancer = ${userId}
-        OR s.empleador = ${userId}
-        group by s.id
-        order by m.id DESC;
+       SELECT s.id, s.activo,	
+(SELECT count(me.id)
+FROM mensajes me
+WHERE me.sala = s.id
+AND me.usuario <> ${userId}
+AND me.estado = 0 ) as mensajespendientes,
+(SELECT me.mensaje
+FROM mensajes me
+WHERE me.sala = s.id
+ORDER BY me.id
+DESC LIMIT 1) as ultimomensaje,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.idusuario
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.idusuario
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as idusuario,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.nombre
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.nombre
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as nombre,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.apellidopaterno
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.apellidopaterno
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as apellidopaterno,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.apellidomaterno
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.apellidomaterno
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as apellidomaterno,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.idrol
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.idrol
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as idrol,
+(if( s.freelancer = ${userId}, ( 
+	SELECT ro.rol
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	INNER JOIN rol ro ON ro.idrol = uu.idrol
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT ro.rol
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	INNER JOIN rol ro ON ro.idrol = uu.idrol
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as rol,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.urlfoto
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.urlfoto
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as urlfoto,
+(if( s.freelancer = ${userId}, ( 
+	SELECT uu.idpais
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT uu.idpais
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as idpais,
+(if( s.freelancer = ${userId}, ( 
+	SELECT pp.pais
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT pp.pais
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as pais,
+(if( s.freelancer = ${userId}, ( 
+	SELECT pp.idregion
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT pp.idregion
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as idregion,
+(if( s.freelancer = ${userId}, ( 
+	SELECT rr.region
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.empleador
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	INNER JOIN region rr ON rr.idregion = pp.idregion
+	WHERE ss.id = s.id
+	LIMIT 1
+), (SELECT rr.region
+	FROM sala ss
+	INNER JOIN usuario uu ON uu.idusuario = ss.freelancer
+	INNER JOIN pais pp ON uu.idpais = pp.idpais
+	INNER JOIN region rr ON rr.idregion = pp.idregion
+	WHERE ss.id = s.id
+	LIMIT 1
+) ) ) as region
+FROM sala s
+INNER JOIN mensajes m on m.sala = s.id
+WHERE s.freelancer = ${userId}
+OR s.empleador = ${userId}
+group by s.id
+order by m.id DESC;
     `;
 
 
