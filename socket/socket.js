@@ -139,10 +139,10 @@ class Socket {
 
 			// actualizar status de la sala (mensaje leido)
 			client.on("mensajeLeido", async (data) =>{
-				const getSalas = await services.salas.actualizarStatusSala(data);
-				if(!getSalas)
+				const getSalaId = await services.salas.actualizarStatusSala(data);
+				if(!getSalaId)
 						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-					return (getSalas);
+					return (getSalaId);
 			});
 
 			
