@@ -306,15 +306,15 @@ order by m.id DESC;
 }
 
 //Actualiza estatus de sala cuando se lee el mensaje
-async function actualizarSala  (data) {
-  const Sala = parseInt(data, 10);
+async function actualizarSala  (data2) {
+  // const Sala = parseInt(data, 10);
   try {
     const updateSala = await prisma.sala.update({
       where: {
-        id: Sala
+        id: data2
       },
       data: {
-        activo: 0
+        activo: false
       }
     });
 
