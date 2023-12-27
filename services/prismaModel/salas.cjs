@@ -311,7 +311,7 @@ async function actualizarSala  (data2) {
   try {
     const updateSala = await prisma.sala.update({
       where: {
-        id: data2
+        id: data2  
       },
       data: {
         activo: false
