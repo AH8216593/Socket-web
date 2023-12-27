@@ -79,7 +79,7 @@ class Socket {
 
             client.on("enviarMensaje", async(data) => {
 				try {
-					if(data.mensaje.trim() === '' || !data.usuario || data.sala === '')
+					if(!data.usuario || data.sala === '')
 						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(data)}`);
 					const mensaje = await services.mensajes.crearMensaje({
 						usuario: data.usuario,
