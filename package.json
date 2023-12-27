@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-
   "scripts": {
     "start": "node socket.js",
     "dev": "nodemon socket.js",
@@ -29,7 +28,7 @@
     "mysql": "^2.18.1",
     "node-fetch": "^3.3.0",
     "nodemon": "^3.0.1",
-    "socket.io": "^4.5.4"
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "prisma": "^5.6.0"
