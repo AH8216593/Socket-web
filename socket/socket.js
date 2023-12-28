@@ -79,38 +79,56 @@ class Socket {
 
             client.on("enviarMensaje", async(data) => {
 				try {
-					if(!data.usuario || data.sala === '')
+					if (data.mensaje.trim() === '') {
+						console.log('entro al primer paso del socket');
+						client.in(data.sala).fetchSockets();
+						// client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+						// // client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+						// // client.emit("recibirMensaje", mensaje, (err, responses) => {
+						// 	console.log('llego al emit ' + mensaje);
+						// 	console.log("llegaron los  mensajes");
+
+						// 	if (err) {
+						// 		console.log("Hubo error", err);
+						// 		console.log("responses", responses);
+						// 	} else {
+						// 		console.log(responses); // one response per client
+						// 	}
+						// });
+					}else{
+						if(!data.usuario || data.sala === '')
 						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(data)}`);
-					const mensaje = await services.mensajes.crearMensaje({
-						usuario: data.usuario,
-						sala:  data.sala,
-						mensaje: data.mensaje,
-						tipo: (data.tipo) ? data.tipo : 'mensaje',
-						estado: data.estado
-					});
-
-					if(!mensaje)
-						throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
-					else
-					console.log('mensaje guardado');
-            			client.in(data.sala).fetchSockets();
-						client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						// client.emit("recibirMensaje", mensaje, (err, responses) => {
-							console.log('llego al emit ' + mensaje);
-							console.log("llegaron los  mensajes");
-
-							if (err) {
-								console.log("Hubo error", err);
-								console.log("responses", responses);
-							} else {
-								console.log(responses); // one response per client
-							}
+						const mensaje = await services.mensajes.crearMensaje({
+							usuario: data.usuario,
+							sala:  data.sala,
+							mensaje: data.mensaje,
+							tipo: (data.tipo) ? data.tipo : 'mensaje',
+							estado: data.estado
 						});
+
+						if(!mensaje)
+							throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
+						else
+						console.log('mensaje guardado');
+							client.in(data.sala).fetchSockets();
+							client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+							// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+							// client.emit("recibirMensaje", mensaje, (err, responses) => {
+								console.log('llego al emit ' + mensaje);
+								console.log("llegaron los  mensajes");
+
+								if (err) {
+									console.log("Hubo error", err);
+									console.log("responses", responses);
+								} else {
+									console.log(responses); // one response per client
+								}
+							});
 					}
-						catch (error) {
-						console.log(error);
-					}
+				}
+					catch (error) {
+					console.log(error);
+				}
 			});
 
 			client.on("obtenerMensajes", async(mensa) => {
