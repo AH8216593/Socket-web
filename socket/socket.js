@@ -17,7 +17,6 @@ class Socket {
 	socketEvents() {
         this.io.on('connection', (client) => {
             console.log('a user connected: ' + client.id);
-
             client.on("iniciarSocket", async(data) => {
 				try {
 					if (!data)
@@ -28,7 +27,7 @@ class Socket {
 					if(!usuario)
 						throw new Error(`El usuario no existe: ${JSON.stringify(data)}`);
 	
-					client.join(data.usuario);
+					// client.join(data.usuario);
 				} catch (error) {
 					console.log(error);
 				}
@@ -66,35 +65,24 @@ class Socket {
 					// if(!(salas.freelancer === usuario))
 					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
 				// esta linea genera la conexion con el join entre una conversacion y otra
-					client.join(salas.id.toString());
-
+					client.join(salas[7]);
 					// para obtener la sala al iniciar
-					client.emit("obtenerSala", salas.id)
+					client.emit("obtenerSala", salas)
 
-					return (salas.id);
+					// return (salas[7].id);
 				} catch (error) {
 					console.log(error);
 				}
 			});
 
             client.on("enviarMensaje", async(data) => {
+				// client.in(data.sala).fetchSockets();
 				try {
 					if (data.mensaje.trim() === '') {
+						// se hace una primera conexion para poder inicar los mensajes
 						console.log('entro al primer paso del socket');
 						client.in(data.sala).fetchSockets();
-						// client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						// // client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-						// // client.emit("recibirMensaje", mensaje, (err, responses) => {
-						// 	console.log('llego al emit ' + mensaje);
-						// 	console.log("llegaron los  mensajes");
 
-						// 	if (err) {
-						// 		console.log("Hubo error", err);
-						// 		console.log("responses", responses);
-						// 	} else {
-						// 		console.log(responses); // one response per client
-						// 	}
-						// });
 					}else{
 						if(!data.usuario || data.sala === '')
 						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(data)}`);
@@ -110,7 +98,7 @@ class Socket {
 							throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
 						else
 						console.log('mensaje guardado');
-							client.in(data.sala).fetchSockets();
+							// client.in(data.sala).fetchSockets();
 							client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 							// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 							// client.emit("recibirMensaje", mensaje, (err, responses) => {

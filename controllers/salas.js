@@ -7,17 +7,18 @@ import * as services from '../services/index.js';
 const obtenerSala = async (salaa, usuario, usuario2) => {
     try {
         // const { id } = req.headers;
-        if(!salaa){
+        // if(!salaa){
             const salaReview = await services.prisma.salas.getSalaReviw(usuario, usuario2);
-            if (salaReview != '') {
+            if (salaReview != '' || salaReview != undefined || salaReview != null) {
+             
                 return salaReview;
             }else{
                 return crearSala(usuario, usuario2);
             }
-        }else{
-            const sala = await services.prisma.salas.getSalaById(salaa);
-            return sala;
-        }
+        // }else{
+        //     const sala = await services.prisma.salas.getSalaById(salaa);
+        //     return sala;
+        // }
         // return res.status(200).json(sala);
     }
     catch (error) {

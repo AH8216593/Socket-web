@@ -21,26 +21,33 @@ async function getSalaById  (data) {
 async function getSalaReviw  (usuario, usuario2) {
   try {
     const  getsala = await prisma.sala.findMany({
+      // where: {
+      //   AND: [
+      //     {
+      //       OR: [
+      //         {
+      //           freelancer: usuario,
+      //           empleador: usuario2,
+      //         },
+      //         {
+      //           freelancer: usuario2,
+      //           empleador: usuario,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+
       where: {
-        AND: [
-          {
-            OR: [
-              {
-                freelancer: usuario,
-                empleador: usuario2,
-              },
-              {
-                freelancer: usuario2,
-                empleador: usuario,
-              },
-            ],
-          },
+        OR: [
+          { freelancer: usuario, empleador: usuario2 },
+          { freelancer: usuario2, empleador: usuario },
         ],
       },
     }); 
 
     console.log('se obtiene sala ');
-    return getsala;
+    return JSON.stringify(getsala);
 
   } catch (error) {
     throw error;
