@@ -9,7 +9,9 @@ const obtenerSala = async (salaa, usuario, usuario2) => {
         // const { id } = req.headers;
         // if(!salaa){
             const salaReview = await services.prisma.salas.getSalaReviw(usuario, usuario2);
-            if (salaReview != '' || salaReview != undefined || salaReview != null) {
+            console.log('Antes de la validación: ---' + salaReview);
+            // if (salaReview != '' || salaReview != undefined || salaReview != null || ) {
+            if (!salaReview.length != 0) {
              
                 return salaReview;
             }else{
