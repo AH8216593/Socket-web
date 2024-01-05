@@ -147,7 +147,7 @@ class Socket {
 			client.on("mensajeLeido", async (data) =>{
 				const getSalaId = await services.mensajes.actualizarStatusMensaje(data.usuario, data.sala);
 				if(!getSalaId)
-						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(getSalaId)}`);
 					return (getSalaId);
 			});
 
