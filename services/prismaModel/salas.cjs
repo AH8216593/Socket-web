@@ -94,7 +94,7 @@ async function createSala(usuario, usuario2entarda){
     });
 
     console.log('sala creada');
-    return JSON.stringify(salaCreada);
+    return JSON.stringify([salaCreada]);
   } catch (error) {
     console.error('Error al crear la sala:', error);
   }
