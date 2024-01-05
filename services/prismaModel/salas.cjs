@@ -311,14 +311,13 @@ order by m.id DESC;
 async function obtenerMensajesPrincipalLista  (usuario) {
   try {
     const getsala = await prisma.$queryRaw`
-    SELECT count(s.id) as chatsconmensajespendientes
-    FROM sala s
-    INNER JOIN mensajes me ON me.sala = s.id
-    WHERE me.sala = s.id
-    AND me.usuario <> ${usuario}
-    AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = ${usuario} OR ss.empleador = ${usuario}  )
-    AND me.estado = 0
-    group by me.sala;
+
+        SELECT count(me.sala) as chatsconmensajespendientes
+        FROM sala s
+        INNER JOIN mensajes me ON me.sala = s.id
+        WHERE me.usuario <> ${usuario}
+        AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = ${usuario} OR ss.empleador = ${usuario}  )
+        AND me.estado = 0;
     `;
 
     // console.log('se obtiene sala' + getsala);
