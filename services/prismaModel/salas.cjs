@@ -323,7 +323,7 @@ async function obtenerMensajesPrincipalLista  (usuario) {
     // console.log('se obtiene sala' + getsala);
     console.log('Salas menu principal :', getsala);
 
-    return getsala.map(sala=> sala.id);
+    return getsala;
     // return getsala;
   } catch (error) {
     throw error;
