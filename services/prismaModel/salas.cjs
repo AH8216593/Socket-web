@@ -311,7 +311,6 @@ order by m.id DESC;
 async function obtenerMensajesPrincipalLista  (usuario) {
   try {
     const getsala = await prisma.$queryRaw`
-
         SELECT count(me.sala) as chatsconmensajespendientes
         FROM sala s
         INNER JOIN mensajes me ON me.sala = s.id
@@ -319,11 +318,14 @@ async function obtenerMensajesPrincipalLista  (usuario) {
         AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = ${usuario} OR ss.empleador = ${usuario}  )
         AND me.estado = 0;
     `;
+    const chatsConMensajesPendientes = getsala.map(item => ({
+      chatsconmensajespendientes: item.chatsConMensajesPendientes.toString(),
+    }));
 
     // console.log('se obtiene sala' + getsala);
-    console.log('Salas menu principal :', getsala);
+    console.log('Salas menu principal :', chatsConMensajesPendientes);
 
-    return getsala;
+    return chatsConMensajesPendientes;
     // return getsala;
   } catch (error) {
     throw error;
