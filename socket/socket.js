@@ -65,10 +65,10 @@ class Socket {
 					// if(!(salas.freelancer === usuario))
 					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
 				// esta linea genera la conexion con el join entre una conversacion y otra
-				console.log(arrayComplet, 'arraycomplet');
+				
 					let arrayComplet = JSON.parse( JSON.stringify(salas));
 					let array2 =  JSON.parse(arrayComplet);
-					
+					console.log(arrayComplet, 'arraycomplet');
 					client.join(array2[0].id.toString());
 
 					// para obtener la sala al iniciar
