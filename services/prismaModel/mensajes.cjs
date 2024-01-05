@@ -28,7 +28,7 @@ async function getMensajeById  (mensaje) {
     const  getMensajeId = await prisma.mensajes.findMany({
       where: {
         sala: mensaje,
-        estado: false
+        estado: true
       },
       orderBy: {
           fecha: 'asc'
@@ -96,7 +96,7 @@ async function actualizarMensaje  (user, room) {
       },
     });
 
-    console.log('update de sala correcto');
+    console.log('update de mensaje correcto');
     return updateSala;
 
   } catch (error) {
