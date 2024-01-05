@@ -151,6 +151,16 @@ class Socket {
 					return (getSalaId);
 			});
 
+			//Obtiene la lista del menu princpial de mensajes pendientes
+			client.on("obtenerMensajesPrincipal", async (usuario) =>{
+				const getSalas = await services.salas.obtenerMensajesPrincipal(usuario);
+				if(!getSalas)
+						throw new Error(`Error al conseguir las salas: ${JSON.stringify(getSalas)}`);
+					console.log('salas listado general  ----' + getSalas);
+					client.emit('responseMensajesPrincipal', getSalas)
+					return (getSalas);
+			});
+
 			
           });
 		  

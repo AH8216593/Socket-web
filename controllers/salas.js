@@ -9,10 +9,8 @@ const obtenerSala = async (salaa, usuario, usuario2) => {
         // const { id } = req.headers;
         // if(!salaa){
             const salaReview = await services.prisma.salas.getSalaReviw(usuario, usuario2);
-            console.log('Antes de la validación: ---' + salaReview);
-            // if (salaReview != '' || salaReview != undefined || salaReview != null || ) {
+            // if (salaReview != '' || salaReview != undefined || salaReview != null) {
             if (!salaReview.length != 0) {
-             
                 return salaReview;
             }else{
                 return crearSala(usuario, usuario2);
@@ -91,19 +89,19 @@ const crearSala = async ( usuario, usuario2) => {
         // return res.status(404).json({ msg: error.message });
     }
 }
-// const actualizarStatusSala = async ( room) => {
-//     try {
+const obtenerMensajesPrincipal = async ( room) => {
+    try {
 
-//         const sala = await services.prisma.salas.actualizarSala(room);
+        const sala = await services.prisma.salas.obtenerMensajesPrincipalLista(room);
 
-//         return sala;
-//     }
-//     catch (error) {
-//         console.error(error.message);
+        return sala;
+    }
+    catch (error) {
+        console.error(error.message);
 
-//         // return res.status(404).json({ msg: error.message });
-//     }
-// }
+        // return res.status(404).json({ msg: error.message });
+    }
+}
 
 const eliminarSala = async (req = request, res = response) => {
     try {
@@ -127,7 +125,7 @@ export {
     eliminarSala,
     obtenerSalaUser,
     obtenerListadoSalas,
-    // actualizarStatusSala
+    obtenerMensajesPrincipal
 }
 
 

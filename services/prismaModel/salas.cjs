@@ -307,26 +307,31 @@ order by m.id DESC;
   }
 }
 
-//Actualiza estatus de sala cuando se lee el mensaje
-// async function actualizarSala  (room) {
-//   const Sala = parseInt(room, 10);
-//   try {
-//     const updateSala = await prisma.mensajes.update({
-//       where: {
-//         sala: room,
-//       },
-//       data: {
-//         estado: 1,
-//       },
-//     });
+//obtiene los chats primcipales en el menu 
+async function obtenerMensajesPrincipalLista  (usuario) {
+  try {
+    const getsala = await prisma.$queryRaw`
+    SELECT count(s.id) as chatsconmensajespendientes
+    FROM sala s
+    INNER JOIN mensajes me ON me.sala = s.id
+    WHERE me.sala = s.id
+    AND me.usuario <> ${usuario}
+    AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = 9 OR ss.empleador = 9  )
+    AND me.estado = 0
+    group by me.sala;
+    `;
 
-//     console.log('update de sala correcto');
-//     return updateSala;
+    // console.log('se obtiene sala' + getsala);
+    console.log('Salas menu principal :', getsala);
 
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+    return getsala.map(sala=> sala.id);
+    // return getsala;
+  } catch (error) {
+    throw error;
+  }
+};
 
 
-module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado} ;
+
+
+module.exports =  { getSalaById, deleteSala, createSala, getSalaReviw, getSalaForUser, obtenerListado, obtenerMensajesPrincipalLista} ;
