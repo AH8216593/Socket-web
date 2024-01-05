@@ -161,7 +161,7 @@ class Socket {
 				if(!getSalas)
 						throw new Error(`Error al conseguir las salas: ${JSON.stringify(getSalas)}`);
 					console.log('salas listado general  ----' + getSalas);
-					client.emit('responseMensajesPrincipal', 1);
+					client.emit('responseMensajesPrincipal', JSON.stringify(getSalas));
 					return (getSalas);
 			});
 
