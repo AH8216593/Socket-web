@@ -321,7 +321,7 @@ async function obtenerMensajesPrincipalLista  (usuario) {
     `;
 
     // console.log('se obtiene sala' + getsala);
-    console.log('Salas menu principal :', getsala.toString());
+    console.log('Salas menu principal :', getsala);
 
     return getsala;
     // return getsala;
