@@ -10,10 +10,12 @@ const obtenerSala = async (salaa, usuario, usuario2) => {
         // if(!salaa){
             const salaReview = await services.prisma.salas.getSalaReviw(usuario, usuario2);
             // if (salaReview != '' || salaReview != undefined || salaReview != null) {
-            if (!salaReview.length != 0) {
-                return salaReview;
-            }else{
+                console.log('sala reviw ----' + JSON.parse(salaReview).length );
+                console.log(salaReview);
+            if (JSON.parse(salaReview).length === 0 ) {
                 return crearSala(usuario, usuario2);
+            }else{
+                return salaReview;
             }
         // }else{
         //     const sala = await services.prisma.salas.getSalaById(salaa);

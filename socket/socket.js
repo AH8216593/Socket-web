@@ -65,11 +65,14 @@ class Socket {
 					// if(!(salas.freelancer === usuario))
 					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
 				// esta linea genera la conexion con el join entre una conversacion y otra
-					client.join(salas[7]);
-					// para obtener la sala al iniciar
-					client.emit("obtenerSala", salas)
+					let arrayComplet = JSON.parse( JSON.stringify(salas));
+					let array2 =  JSON.parse(arrayComplet);
+					
+					client.join(array2[0].id.toString());
 
-					// return (salas[7].id);
+					// para obtener la sala al iniciar
+					client.emit("obtenerSala", array2[0].id)
+
 				} catch (error) {
 					console.log(error);
 				}
@@ -98,7 +101,7 @@ class Socket {
 							throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
 						else
 						console.log('mensaje guardado');
-							// client.in(data.sala).fetchSockets();
+							client.in(data.sala).fetchSockets();
 							client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 							// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
 							// client.emit("recibirMensaje", mensaje, (err, responses) => {

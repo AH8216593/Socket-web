@@ -316,7 +316,7 @@ async function obtenerMensajesPrincipalLista  (usuario) {
     INNER JOIN mensajes me ON me.sala = s.id
     WHERE me.sala = s.id
     AND me.usuario <> ${usuario}
-    AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = 9 OR ss.empleador = 9  )
+    AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = ${usuario} OR ss.empleador = ${usuario}  )
     AND me.estado = 0
     group by me.sala;
     `;
