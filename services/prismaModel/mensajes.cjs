@@ -92,7 +92,7 @@ async function actualizarMensaje  (room, user) {
         usuario: user
       },
       data: {
-        estado: 1,
+        estado: true,
       },
     });
 
