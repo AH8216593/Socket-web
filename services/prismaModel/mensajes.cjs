@@ -83,12 +83,13 @@ async function deleteMensale ( mensajeId){
   }
 }
 
-async function actualizarMensaje  (room) {
+async function actualizarMensaje  (room, user) {
   const Sala = parseInt(room, 10);
   try {
     const updateSala = await prisma.mensajes.update({
       where: {
         sala: room,
+        usuario: user
       },
       data: {
         estado: 1,

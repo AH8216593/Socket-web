@@ -78,10 +78,10 @@ const eliminarMensaje = async (req = request, res = response) => {
         return res.status(404).json({ msg: error.message });
     }
 }
-const actualizarStatusMensaje = async ( room) => {
+const actualizarStatusMensaje = async ( room, usuario) => {
     try {
 
-        const mensajito = await services.prisma.mensajes.actualizarMensaje(room);
+        const mensajito = await services.prisma.mensajes.actualizarMensaje(room, usuario);
 
         return mensajito;
     }
