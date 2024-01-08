@@ -318,14 +318,23 @@ async function obtenerMensajesPrincipalLista  (usuario) {
         AND s.id IN (SELECT ss.id FROM sala ss WHERE ss.freelancer = ${usuario} OR ss.empleador = ${usuario}  )
         AND me.estado = 0;
     `;
-    const chatsConMensajesPendientes = getsala.map(item => ({
-      chatsconmensajespendientes: item.chatsConMensajesPendientes.toString(),
-    }));
 
-    // console.log('se obtiene sala' + getsala);
-    console.log('Salas menu principal :', chatsConMensajesPendientes);
 
-    return chatsConMensajesPendientes;
+    // const chatsConMensajesPendientes = getsala.map(item => ({
+    //   chatsconmensajespendientes: item.chatsConMensajesPendientes.toString(),
+    // }));
+    
+
+    console.log('se obtiene sala' + getsala);
+    const objetoSerializado = JSON.stringify(getsala, (key, value) => {
+      if (typeof value === 'bigint') {
+        return value.toString();
+      }
+      return value;
+    });
+    // console.log('Salas menu principal :', chatsConMensajesPendientes);
+
+    return objetoSerializado;
     // return getsala;
   } catch (error) {
     throw error;
