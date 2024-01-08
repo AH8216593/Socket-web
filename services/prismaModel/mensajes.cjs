@@ -27,8 +27,7 @@ async function getMensajeById  (mensaje) {
   try {
     const  getMensajeId = await prisma.mensajes.findMany({
       where: {
-        sala: mensaje,
-        estado: true
+        sala: mensaje
       },
       orderBy: {
           fecha: 'asc'
