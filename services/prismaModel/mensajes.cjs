@@ -11,8 +11,9 @@ const prisma = new PrismaClient();
       usuario:  user,
       tipo:   req.tipo,
       mensaje:   req.mensaje,
-      fecha:    req.fecha,
-      estado: req.estado
+      fecha:    fecha,
+      estado: req.estado,
+      fechaDispositivo: req.fechaDispositivo
       },
     });
     console.log('mensaje Creado');

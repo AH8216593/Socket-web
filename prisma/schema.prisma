@@ -49,4 +49,5 @@ model mensajes {
   mensaje   String
   fecha  DateTime
   estado Boolean
+  fecha_dispositivo DateTime
 }
