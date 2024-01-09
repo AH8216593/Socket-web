@@ -36,8 +36,8 @@ const obtenerMensajes = async (mensa) => {
 const crearMensaje = async (data,  res = response) => {
     try {
        
-        const  fecha = new Date();
-        const mensajes = await services.prisma.mensajes.createMensaje(data, fecha);
+        // const  fecha = new Date();
+        const mensajes = await services.prisma.mensajes.createMensaje(data);
         
         // return res.status(200).json(mensajes);
         return mensajes;

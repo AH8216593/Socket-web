@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
       usuario:  user,
       tipo:   req.tipo,
       mensaje:   req.mensaje,
-      fecha:    fecha,
+      fecha:    req.fecha,
       estado: req.estado
       },
     });
