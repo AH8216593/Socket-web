@@ -274,7 +274,7 @@ INNER JOIN mensajes m on m.sala = s.id
 WHERE s.freelancer = ${userId}
 OR s.empleador = ${userId}
 group by s.id
-order by m.id DESC;
+order by mensajespendientes DESC;
     `;
 
 
