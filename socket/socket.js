@@ -95,8 +95,8 @@ class Socket {
 							sala:  data.sala,
 							mensaje: data.mensaje,
 							tipo: (data.tipo) ? data.tipo : 'mensaje',
+							estado: data.estado,
 							fechaDispositivo: data.fechaDispositivo,
-							estado: data.estado
 						});
 
 						if(!mensaje)
