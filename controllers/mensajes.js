@@ -43,7 +43,7 @@ const crearMensaje = async (data,  res = response) => {
         return mensajes;
     }
     catch (error) {
-        return res.status(404).json({ msg: error.message });
+        console.error(error.message);
     }
 }
 

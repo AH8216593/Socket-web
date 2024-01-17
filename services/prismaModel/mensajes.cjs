@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 // un usuario
  async function createMensaje (req, fecha) {
   const user = parseInt(req.usuario, 10);
-  const fechaMovil = new Date(req.fechaDispositivo)
+  const fechaMovil = new Date(req.fechaDispositivo);
+  console.log(req);
   try {
     const newMensaje =  await prisma.mensajes.create({
       data: {
@@ -14,10 +15,11 @@ const prisma = new PrismaClient();
       mensaje:   req.mensaje,
       fecha:    fecha,
       estado: req.estado,
-      fecha_dispositivo: fechaMovil
+      fecha_dispositivo: fechaMovil,
+      nombreImagen: req.nombreImagen
       },
     });
-    console.log('mensaje Creado', newMensaje);
+    console.log('mensaje Creado');
     return newMensaje;
   } catch (error) {
     throw error;

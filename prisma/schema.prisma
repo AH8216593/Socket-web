@@ -50,4 +50,5 @@ model mensajes {
   fecha  DateTime
   estado Boolean
   fecha_dispositivo DateTime
+  nombreImagen String
 }

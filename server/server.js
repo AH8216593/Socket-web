@@ -2,6 +2,7 @@ import express, { json, static as estatic } from 'express';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import { createServer } from 'http';
+import { renewBucketToken } from '../util/amazonBucketManager.js';
 
 import dbConnection from './database/config.js';
 
@@ -13,7 +14,8 @@ class Server {
 
         // Conectar a base de datos
         this.conectarDB();
-
+        // setInterval( renewBucketToken, 5000);
+        setInterval( renewBucketToken, 1000* 50 * 60);
         // Middlewares
         this.middlewares();
 
@@ -25,6 +27,7 @@ class Server {
     }
 
     async conectarDB() {
+        renewBucketToken();
         await dbConnection.dbConnection();
     }
 

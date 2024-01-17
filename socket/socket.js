@@ -1,6 +1,7 @@
 import { Server as SocketServer } from "socket.io";
 // import * as services from '../services/index.js';
-import * as services from '../controllers/index.js'
+import * as services from '../controllers/index.js';
+import * as aws from '../util/amazonBucketManager.js';
 
 class Socket {
 	constructor(server) {
@@ -61,10 +62,6 @@ class Socket {
 
 					if(!salas)
 						throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-
-					// if(!(salas.freelancer === usuario))
-					// 	throw new Error(`Error al conseguir las salas: ${JSON.stringify(salas)}`);
-				// esta linea genera la conexion con el join entre una conversacion y otra
 				
 					let arrayComplet = await JSON.parse( JSON.stringify(salas));
 					let array2 =  await JSON.parse(arrayComplet);
@@ -79,37 +76,36 @@ class Socket {
 				}
 			});
 
-            client.on("enviarMensaje", async(data) => {
-				// client.in(data.sala).fetchSockets();
-				try {
-					if (data.mensaje.trim() === '') {
-						// se hace una primera conexion para poder inicar los mensajes
-						console.log('entro al primer paso del socket');
-						client.in(data.sala).fetchSockets();
+			// ya esta ok
+			client.on("cargarImagenes", async( dataImages) =>{
+				// console.log(file);
+				let image = dataImages.dataImages;
+				let mesje = dataImages.data;
 
-					}else{
-						if(!data.usuario || data.sala === '')
-						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(data)}`);
+				console.log( mesje.fechaDispositivo + image.name , 'fecha dispo');
+					if(!mesje.usuario || mesje.sala === '')
+						throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(mesje)}`);
 						const mensaje = await services.mensajes.crearMensaje({
-							usuario: data.usuario,
-							sala:  data.sala,
-							mensaje: data.mensaje,
-							tipo: (data.tipo) ? data.tipo : 'mensaje',
-							estado: data.estado,
-							fechaDispositivo: data.fechaDispositivo,
+							usuario: mesje.usuario,
+							sala:  mesje.sala,
+							mensaje: '',
+							tipo: 'imagen',
+							estado: mesje.estado,
+							fechaDispositivo: mesje.fechaDispositivo,
+							nombreImagen: mesje.fechaDispositivo + image.name 
 						});
-
+	
 						if(!mensaje)
 							throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
 						else
-						console.log('mensaje guardado');
-							client.in(data.sala).fetchSockets();
-							client.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-							// client.broadcast.to(data.sala).emit("recibirMensaje", mensaje, (err, responses) => {
-							// client.emit("recibirMensaje", mensaje, (err, responses) => {
+						await aws.uploadPhotoTochat(image, mesje.fechaDispositivo + image.name );
+						let url =	await aws.getChatPhotoByTheName( mesje.fechaDispositivo + image.name );
+						console.log('URL: ' , url);
+						console.log('archivo guardado ');
+							client.in(mesje.sala).fetchSockets();
+							client.to(mesje.sala).emit("recibirMensaje", mensaje, url, (err, responses) => {
 								console.log('llego al emit ' + mensaje);
-								console.log("llegaron los  mensajes");
-
+								console.log("llegaron los  mensajes de archivos");
 								if (err) {
 									console.log("Hubo error", err);
 									console.log("responses", responses);
@@ -117,6 +113,90 @@ class Socket {
 									console.log(responses); // one response per client
 								}
 							});
+				
+			});
+
+			// este ya esta ok
+            client.on("enviarMensaje", async(dataImages) => {
+				// client.in(data.sala).fetchSockets();
+				let image = dataImages.dataImages;
+				let mesje = dataImages.data;
+				try {
+
+					if (mesje.mensaje.trim() === '') {
+						// se hace una primera conexion para poder inicar los mensajes
+						console.log('entro al primer paso del socket');
+						client.in(mesje.sala).fetchSockets();
+
+					}else{
+						//valida que el objeto files tenga data para mandarlo con un mensaje
+						if(image.name == ''){
+								if(!mesje.usuario || mesje.sala === '')
+								throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(mesje)}`);
+								const mensaje = await services.mensajes.crearMensaje({
+									usuario: mesje.usuario,
+									sala:  mesje.sala,
+									mensaje: mesje.mensaje,
+									tipo:  'mensaje',
+									estado: mesje.estado,
+									fechaDispositivo: mesje.fechaDispositivo,
+									nombreImagen: ''
+								});
+
+								if(!mensaje)
+									throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
+								else
+								console.log('mensaje guardado');
+									client.in(mesje.sala).fetchSockets();
+									client.to(mesje.sala).emit("recibirMensaje", mensaje, (err, responses) => {
+										console.log('llego al emit ' + mensaje);
+										console.log("llegaron los  mensajes");
+
+										if (err) {
+											console.log("Hubo error", err);
+											console.log("responses", responses);
+										} else {
+											console.log(responses); // one response per client
+										}
+									});
+
+						}else{
+							// se manda mensaje con archivo con upload
+							console.log( mesje.fechaDispositivo + image.name , 'fecha dispo');
+							if(!mesje.usuario || mesje.sala === '')
+								throw new Error(`El mensaje, el usuario, no se manda la sala ${JSON.stringify(mesje)}`);
+								const mensaje = await services.mensajes.crearMensaje({
+									usuario: mesje.usuario,
+									sala:  mesje.sala,
+									mensaje: mesje.mensaje,
+									tipo: 'imagen',
+									estado: mesje.estado,
+									fechaDispositivo: mesje.fechaDispositivo,
+									nombreImagen: mesje.fechaDispositivo + image.name 
+								});
+			
+								if(!mensaje)
+									throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
+								else
+								await aws.uploadPhotoTochat(image, mesje.fechaDispositivo + image.name );
+								let url =	await aws.getChatPhotoByTheName( mesje.fechaDispositivo + image.name );
+								console.log('URL: ' , url);
+								console.log('archivo guardado ');
+									client.in(mesje.sala).fetchSockets();
+									client.to(mesje.sala).emit("recibirMensaje", mensaje, url, (err, responses) => {
+										console.log('llego al emit ' + mensaje, url);
+										console.log("llegaron los  mensajes de archivos");
+										if (err) {
+											console.log("Hubo error", err);
+											console.log("responses", responses);
+										} else {
+											console.log(responses); // one response per client
+										}
+									});
+								
+						}
+
+						
 					}
 				}
 					catch (error) {
@@ -129,20 +209,30 @@ class Socket {
 				try {
 					const menssages = await services.mensajes.obtenerMensajes(mensa);
 
+					//notas en el mensaje como regresa varios objetos se debe de recorrer para mandar a traer imagen 
 					if(!menssages)
 						throw new Error(`Error al conseguir los mensajes: ${JSON.stringify(menssages)}`);
+						// let url;
+						  menssages.forEach( async respo => {
+							if (respo.nombreImagen.trim() == '') {
+								respo.url = '';
+							}else{
+								respo.url  = await aws.getChatPhotoByTheName(respo.nombreImagen);
+							}
 
-					client.emit("todosMensajes", menssages, (err, responses) => {
-						console.log('llego al emit ' + menssages);
-		
-						if (err) {
-							console.log("Hubo error", err);
-							console.log("responses", responses);
-						} else {
-							console.log(responses); // one response per client
-						}
-					});
-					return menssages;
+							 client.emit("todosMensajes",  menssages,  (err, responses) => {
+								console.log('llego a emit ' + menssages );
+				
+								if (err) {
+									console.log("Hubo error", err);
+									console.log("responses", responses);
+								} else {
+									console.log(responses); // one response per client
+								}
+							});
+						});
+					
+					// return menssages;
 				} catch (error) {
 					console.log(error);
 				}
