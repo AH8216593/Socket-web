@@ -94,17 +94,23 @@ class Socket {
 							fechaDispositivo: mesje.fechaDispositivo,
 							nombreImagen: mesje.fechaDispositivo + image.name 
 						});
-	
+	 
 						if(!mensaje)
 							throw new Error(`Error al guardar el mensaje: ${JSON.stringify(mensaje)}`);
 						else
 						await aws.uploadPhotoTochat(image, mesje.fechaDispositivo + image.name );
 						let url =	await aws.getChatPhotoByTheName( mesje.fechaDispositivo + image.name );
-						console.log('URL: ' , url);
 						console.log('archivo guardado ');
+						
+						mensaje.url = url;
+						let pa = JSON.stringify(mensaje)
+						// for(let clave in mensaje.url){
+						// 	console.log('clave', clave);
+						// }
+						console.log(' respuesta de mensajes:', pa);
 							client.in(mesje.sala).fetchSockets();
-							client.to(mesje.sala).emit("recibirMensaje", mensaje, url, (err, responses) => {
-								console.log('llego al emit ' + mensaje);
+							client.to(mesje.sala).emit("recibirMensaje", pa, (err, responses) => {
+								console.log('llego al emit ' + pa);
 								console.log("llegaron los  mensajes de archivos");
 								if (err) {
 									console.log("Hubo error", err);
@@ -182,9 +188,11 @@ class Socket {
 								let url =	await aws.getChatPhotoByTheName( mesje.fechaDispositivo + image.name );
 								console.log('URL: ' , url);
 								console.log('archivo guardado ');
+								mensaje.url = url;
+								let pa = JSON.stringify(mensaje)
 									client.in(mesje.sala).fetchSockets();
-									client.to(mesje.sala).emit("recibirMensaje", mensaje, url, (err, responses) => {
-										console.log('llego al emit ' + mensaje, url);
+									client.to(mesje.sala).emit("recibirMensaje", pa, (err, responses) => {
+										console.log('llego al emit ' + pa);
 										console.log("llegaron los  mensajes de archivos");
 										if (err) {
 											console.log("Hubo error", err);
@@ -204,8 +212,8 @@ class Socket {
 				}
 			});
 
+			//ya funciona no lo toques!!!!!
 			client.on("obtenerMensajes", async(mensa) => {
-				console.log('mensa' + mensa);
 				try {
 					const menssages = await services.mensajes.obtenerMensajes(mensa);
 
@@ -213,24 +221,61 @@ class Socket {
 					if(!menssages)
 						throw new Error(`Error al conseguir los mensajes: ${JSON.stringify(menssages)}`);
 						// let url;
-						  menssages.forEach( async respo => {
-							if (respo.nombreImagen.trim() == '') {
-								respo.url = '';
-							}else{
-								respo.url  = await aws.getChatPhotoByTheName(respo.nombreImagen);
-							}
-
-							 client.emit("todosMensajes",  menssages,  (err, responses) => {
-								console.log('llego a emit ' + menssages );
+						//   menssages.forEach( async respo => {
+						// 	if (respo.nombreImagen == '') {
+						// 		respo.url =  '';
+						// 	}else{
+						// 		respo.url  = await aws.getChatPhotoByTheName(respo.nombreImagen);
+						// 	}
+						// 	console.log('Mensajes response', menssages);
+						// 	  client.emit("todosMensajes",  menssages,  (err, responses) => {
+						// 		console.log('llego a emit ' + menssages );
 				
-								if (err) {
-									console.log("Hubo error", err);
-									console.log("responses", responses);
-								} else {
-									console.log(responses); // one response per client
-								}
-							});
+						// 		if (err) {
+						// 			console.log("Hubo error", err);
+						// 			console.log("responses", responses);
+						// 		} else {
+						// 			console.log(responses); // one response per client
+						// 		}
+						// 	});
+						// });
+						const promises = [];
+
+						menssages.forEach(respo => {
+						const promise = new Promise(async resolve => {
+							try {
+							if (respo.nombreImagen == '') {
+								respo.url = '';
+							} else {
+								respo.url = await aws.getChatPhotoByTheName(respo.nombreImagen);
+							}
+							resolve(respo);
+							} catch (error) {
+							// Manejar el error de la llamada a aws.getChatPhotoByTheName si es necesario
+							console.error('Error al obtener la foto del chat:', error);
+							resolve(respo); // Resolver la promesa incluso en caso de error para no detener el flujo
+							}
 						});
+
+
+						promises.push(promise);
+						});
+
+						// Esperar a que todas las promesas se resuelvan
+						Promise.all(promises).then(updatedMessages => {
+						client.emit("todosMensajes", updatedMessages, (err, responses) => {
+							console.log('llego a emit ' + updatedMessages);
+
+							if (err) {
+							console.log("Hubo error", err);
+							console.log("responses", responses);
+							} else {
+							console.log(responses); // una respuesta por cliente
+							}
+						});
+						});
+
+						
 					
 					// return menssages;
 				} catch (error) {
