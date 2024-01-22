@@ -87,7 +87,7 @@ export const uploadPhotoTochat = async ( file, imageName ) => {
     
     const params = {
         Bucket: process.env.BUCKET_NAME,
-        Key: process.env.CHAT_FILES_FOLDER + "/" + imageName,
+        Key: "chat-files" + "/" + imageName,
         Body: bytesArray,
         ContentType: file.type,
         ContentLength: file.size,
