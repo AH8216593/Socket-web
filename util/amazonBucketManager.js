@@ -110,7 +110,7 @@ export const getChatPhotoByTheName = async ( imageName ) =>{
 
     const params = {
         Bucket: process.env.BUCKET_NAME,
-        Key: process.env.CHAT_FILES_FOLDER + "/" + imageName,
+        Key: "chat-files" + "/" + imageName,
     
     }
 
